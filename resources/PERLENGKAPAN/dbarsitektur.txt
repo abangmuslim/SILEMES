@@ -1,0 +1,164 @@
+DATABASE KESKEL12 (FINAL)
+=================================
+
+
+users
+---------------------------------
+id (PK)
+nama
+username (UNIQUE)
+password
+role                (admin/petugas)
+created_at
+updated_at
+
+
+anggota
+---------------------------------
+id (PK)
+nama
+username (UNIQUE)
+password
+jabatanid           (FK -> jabatan.id)
+pangkatid           (FK -> pangkat.id)
+statusid            (FK -> status.id)
+
+statusakun          (pending/disetujui/ditolak)
+tanggaldaftar
+tanggalapprove
+approveoleh         (FK -> users.id)
+
+created_at
+updated_at
+
+
+jabatan
+---------------------------------
+id (PK)
+namajabatan
+created_at
+updated_at
+
+
+pangkat
+---------------------------------
+id (PK)
+namapangkat
+created_at
+updated_at
+
+
+status
+---------------------------------
+id (PK)
+namastatus          
+created_at
+updated_at
+
+
+iuran
+---------------------------------
+id (PK)
+namaiuran
+idstatus            (FK -> status.id)
+jumlah
+periode             (bulanan/tahunan)
+created_at
+updated_at
+
+
+bantuan
+---------------------------------
+id (PK)
+namabantuan
+jumlah
+created_at
+updated_at
+
+
+kemalangananggota
+---------------------------------
+id (PK)
+idanggota           (FK -> anggota.id)
+idbantuan           (FK -> bantuan.id)
+status              (diajukan/disetujui/ditolak/sudah_dibayar)
+created_at
+updated_at
+
+
+setoran
+---------------------------------
+id (PK)
+idanggota           (FK -> anggota.id)
+idiuran             (FK -> iuran.id)
+
+periode             (format: YYYY-MM)
+tanggal
+jumlah
+bukti               (file foto)
+keterangan
+
+status              (menunggu/diverifikasi/ditolak)
+verifikasi_oleh     (FK -> users.id)
+tanggal_verifikasi
+
+created_at
+updated_at
+
+
+pembayaran
+---------------------------------
+id (PK)
+idanggota           (FK -> anggota.id)
+idbantuan           (FK -> bantuan.id)
+
+tanggal
+jumlah
+bukti               (file foto)
+keterangan
+
+status              (menunggu/diverifikasi/ditolak)
+verifikasi_oleh     (FK -> users.id)
+tanggal_verifikasi
+
+created_at
+updated_at
+
+
+berita   ⭐ (TABEL BARU)
+---------------------------------
+id (PK)
+judul
+slug               (UNIQUE, untuk URL SEO)
+isi                (TEXT)
+foto               (nullable)
+tanggal
+status             (draft/publish)
+
+iduser             (FK -> users.id)  ← pembuat berita
+
+created_at
+updated_at
+
+
+komentar   ⭐ (UPDATED RELASI)
+---------------------------------
+id (PK)
+isi
+
+idberita           (FK -> berita.id)   ← RELASI UTAMA (WAJIB)
+idanggota          (FK -> anggota.id, nullable)
+iduser             (FK -> users.id, nullable)
+
+tanggal
+tipe               (komentar/pengumuman/notifikasi)
+
+created_at
+updated_at
+
+
+
+just for refresh db
+
+php artisan optimize:clear   
+php artisan migrate:fresh --seed

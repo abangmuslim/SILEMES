@@ -1,0 +1,286 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        /*
+        |------------------------------------------------------------------
+        | MASTER
+        |------------------------------------------------------------------
+        */
+        Schema::create('addresses', function (Blueprint $table) {
+            $table->id();
+            $table->string('street')->nullable();
+            $table->string('village')->nullable();
+            $table->string('district')->nullable();
+            $table->string('regency')->nullable();
+            $table->string('province')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('country')->default('Indonesia');
+            $table->timestamps();
+        });
+
+        Schema::create('institutions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->enum('type', ['school','course']);
+            $table->foreignId('address_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('photo')->nullable();
+            $table->timestamps();
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | AUTH & ROLE
+        |------------------------------------------------------------------
+        */
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->enum('status',['pending','active','inactive'])->default('pending');
+            $table->foreignId('address_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('photo')->nullable();
+            $table->timestamp('last_login')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('role_id')->constrained()->cascadeOnDelete();
+            $table->primary(['user_id','role_id']);
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | STUDENT
+        |------------------------------------------------------------------
+        */
+        Schema::create('students', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('nis')->unique();
+            $table->enum('gender',['male','female'])->nullable();
+            $table->date('birth_date')->nullable();
+            $table->foreignId('address_id')->nullable()->constrained()->nullOnDelete();
+            $table->enum('status',['pending','active','inactive','alumni'])->default('pending');
+            $table->string('photo')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('student_accounts', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->timestamp('last_login')->nullable();
+            $table->enum('status',['active','inactive'])->default('active');
+            $table->timestamps();
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | ACADEMIC CORE
+        |------------------------------------------------------------------
+        */
+        Schema::create('programs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('institution_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->enum('type',['formal','course']);
+            $table->string('photo')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('classes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('program_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->year('year');
+            $table->timestamps();
+        });
+
+        Schema::create('enrollments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('program_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('class_id')->nullable()->constrained()->nullOnDelete();
+            $table->enum('status',['pending','active','finished','dropped'])->default('pending');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->unique(['student_id','program_id']);
+            $table->timestamps();
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | LMS
+        |------------------------------------------------------------------
+        */
+        Schema::create('courses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('program_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->string('photo')->nullable();
+            $table->enum('status',['draft','published'])->default('draft');
+            $table->timestamps();
+        });
+
+        Schema::create('modules', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->integer('order')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('lessons', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->longText('content')->nullable();
+            $table->integer('order')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('progress', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('enrollment_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('lesson_id')->constrained()->cascadeOnDelete();
+            $table->enum('status',['ongoing','completed'])->default('ongoing');
+            $table->timestamp('completed_at')->nullable();
+            $table->unique(['enrollment_id','lesson_id']);
+            $table->timestamps();
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | CBT
+        |------------------------------------------------------------------
+        */
+        Schema::create('exams', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('program_id')->constrained()->cascadeOnDelete(); // 🔥 FIX
+            $table->foreignId('course_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('title');
+            $table->enum('type',['pretest','practice','final']);
+            $table->integer('duration');
+            $table->integer('total_score')->default(0);
+            $table->enum('status',['draft','published'])->default('draft');
+            $table->timestamps();
+        });
+
+        Schema::create('questions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
+            $table->text('question_text');
+            $table->enum('type',['mcq','essay']);
+            $table->timestamps();
+        });
+
+        Schema::create('options', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
+            $table->text('option_text');
+            $table->boolean('is_correct')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('attempts', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('enrollment_id')->nullable()->constrained()->nullOnDelete(); // 🔥 FIX
+            $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
+            $table->enum('status',['ongoing','submitted','expired'])->default('ongoing');
+            $table->integer('score')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('finished_at')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('attempt_details', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('attempt_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
+            $table->text('answer')->nullable();
+            $table->boolean('is_correct')->nullable();
+            $table->unique(['attempt_id','question_id']);
+            $table->timestamps();
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | ASSESSMENT & CERTIFICATE
+        |------------------------------------------------------------------
+        */
+        Schema::create('assessments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('enrollment_id')->constrained()->cascadeOnDelete();
+            $table->enum('type',['objective','subjective']);
+            $table->integer('score')->nullable();
+            $table->text('notes')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('certificates', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('enrollment_id')->constrained()->cascadeOnDelete();
+            $table->string('certificate_number')->unique();
+            $table->timestamp('issued_at')->nullable();
+            $table->timestamps();
+        });
+
+        /*
+        |------------------------------------------------------------------
+        | MEDIA
+        |------------------------------------------------------------------
+        */
+        Schema::create('media', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('mediable');
+            $table->string('file_path');
+            $table->string('file_name')->nullable();
+            $table->string('file_type')->nullable();
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('media');
+        Schema::dropIfExists('certificates');
+        Schema::dropIfExists('assessments');
+        Schema::dropIfExists('attempt_details');
+        Schema::dropIfExists('attempts');
+        Schema::dropIfExists('options');
+        Schema::dropIfExists('questions');
+        Schema::dropIfExists('exams');
+        Schema::dropIfExists('progress');
+        Schema::dropIfExists('lessons');
+        Schema::dropIfExists('modules');
+        Schema::dropIfExists('courses');
+        Schema::dropIfExists('enrollments');
+        Schema::dropIfExists('classes');
+        Schema::dropIfExists('programs');
+        Schema::dropIfExists('student_accounts');
+        Schema::dropIfExists('students');
+        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('institutions');
+        Schema::dropIfExists('addresses');
+    }
+};

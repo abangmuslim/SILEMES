@@ -1,0 +1,126 @@
+users → roles
+
+students
+   ↓
+enrollments
+   ↓
+programs
+   ↓
+courses
+   ↓
+modules
+   ↓
+lessons
+   ↓
+progress
+
+students
+   ↓
+attempts → exams → questions → options
+
+enrollments
+   ↓
+assessments
+   ↓
+certificates
+
+
+✅ HARUS
+semua CBT pakai student_id
+lifecycle pakai enrollment_id
+role hanya di users
+
+
+
+BREAKDOWN STRUKTUR AUTH + DATABASE => SILEMES (Academic + CBT System)
+🔐 AUTHENTICATION
+Controllers/Auth/AuthController
+    → middleware:user (admin, staff, teacher)
+    → middleware:student (optional login siswa)
+
+Route:
+,/login (user)
+,/student-login (optional)
+👨‍💻 [Middleware USER] (ADMIN + STAFF + TEACHER)
+🧩 dashboarduser
+dashboardadmin
+dashboardstaff
+dashboardteacher
+
+
+🏢 institution master
+/institutions-> id,name,type (school, course),address_id
+📍 address master
+/addresses-> id,street,village,district,regency,province,postal_code,country
+👥 user division
+/roles-> id,name (admin, staff, teacher)
+/users-> id,name,email,password,status (active, inactive),address_id,photo
+
+/role_user-> user_id,role_id
+
+👉 middleware:
+admin → full access
+staff → terbatas
+teacher → akademik + CBT
+🎓 student division (CORE)
+/students-> id,name,nis,gender,birth_date,address_id,status (active, inactive, alumni)
+
+/student_accounts (optional)-> id,student_id,email,password
+🧠 academic core (LIFECYCLE ENGINE)
+📚 programs (pengganti event)
+/programs-> id,institution_id,name,type (formal, course)
+🏫 classes / batch
+/classes-> id,program_id,name,year
+/enrollments-> id,student_id,program_id,class_id,status (pending, active, finished, dropped),start_date,end_date
+
+👉 ini pengganti:
+
+status siswa
+riwayat pendidikan
+lifecycle utama
+📘 learning division (LMS LIGHT)
+📚 courses
+/courses-> id,program_id,title,description
+📦 modules
+/modules-> id,course_id,title,order
+📄 lessons
+/lessons-> id,module_id,title,content,order
+📊 progress tracking
+/progress-> id,enrollment_id,lesson_id,status (ongoing, completed),completed_at
+
+lock/unlock chapter ✔️
+tracking belajar ✔️
+🧪 CBT division (CORE BUSINESS 💰)
+📝 exams
+/exams-> id,course_id (optional),title,type (pretest, practice, final),duration (minutes),total_score
+❓ questions
+/questions-> id,exam_id,question_text,type (mcq, essay)
+🔘 options
+/options-> id,question_id,option_text,is_correct
+🔥 attempts (SUPER CRITICAL)
+/attempts-> id,student_id,enrollment_id,exam_id,status (ongoing, submitted, expired),score,started_at,finished_at
+📄 attempt_details
+/attempt_details-> id,attempt_id,question_id,answer,is_correct
+📊 assessment division
+/assessments-> id,enrollment_id,type (objective, subjective),score,notes
+🎓 certificate division
+/certificates-> id,enrollment_id,certificate_number,issued_at
+📊 report division
+/reports (optional future),academic report,CBT report,progress report
+
+👨‍🎓 [Middleware STUDENT] (SELF SERVICE)
+🧩 dashboardstudent
+
+ringkasan:
+enrollment aktif
+progress belajar
+hasil CBT
+📚 learning access
+/my-courses
+/my-progress
+🧪 exam access
+/my-exams
+/my-attempts
+📊 result & certificate
+/my-results
+/my-certificates

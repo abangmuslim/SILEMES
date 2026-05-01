@@ -1,0 +1,202 @@
+silemes/
+│
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │
+│   │   ├── Auth/
+│   │   │   ├── ControllerAuthUser.php
+│   │   │   └── ControllerAuthStudent.php
+│   │   │
+│   │   ├── Dashboard/
+│   │   │   ├── ControllerDashboardAdmin.php
+│   │   │   ├── ControllerDashboardStaff.php
+│   │   │   ├── ControllerDashboardTeacher.php
+│   │   │   └── ControllerDashboardStudent.php
+│   │   │
+│   │   ├── Master/
+│   │   │   ├── ControllerInstitution.php
+│   │   │   ├── ControllerAddress.php
+│   │   │   └── ControllerRole.php
+│   │   │
+│   │   ├── User/ (ACTOR MANAGEMENT)
+│   │   │   ├── ControllerUser.php
+│   │   │   └── ControllerRoleUser.php
+│   │   │
+│   │   ├── Student/ (CORE ENTITY)
+│   │   │   ├── ControllerStudent.php
+│   │   │   └── ControllerStudentAccount.php
+│   │   │
+│   │   ├── Academic/ (LIFECYCLE ENGINE)
+│   │   │   ├── ControllerProgram.php
+│   │   │   ├── ControllerClassroom.php
+│   │   │   └── ControllerEnrollment.php
+│   │   │
+│   │   ├── LMS/ (LEARNING SYSTEM)
+│   │   │   ├── ControllerCourse.php
+│   │   │   ├── ControllerModule.php
+│   │   │   ├── ControllerLesson.php
+│   │   │   └── ControllerProgress.php
+│   │   │
+│   │   ├── CBT/ (💰 CORE BUSINESS)
+│   │   │   ├── ControllerExam.php
+│   │   │   ├── ControllerQuestion.php
+│   │   │   ├── ControllerOption.php
+│   │   │   ├── ControllerAttempt.php
+│   │   │   └── ControllerAttemptDetail.php
+│   │   │
+│   │   ├── Assessment/
+│   │   │   └── ControllerAssessment.php
+│   │   │
+│   │   ├── Certificate/
+│   │   │   └── ControllerCertificate.php
+│   │   │
+│   │   ├── Report/
+│   │   │   ├── ControllerAcademicReport.php
+│   │   │   ├── ControllerCBTReport.php
+│   │   │   ├── ControllerProgressReport.php
+│   │   │   └── ControllerStudentReport.php
+│   │   │
+│   │   ├── Media/
+│   │   │   └── ControllerMedia.php
+│   │   │
+│   │   ├── StudentZone/ (SELF SERVICE)
+│   │   │   ├── ControllerMyEnrollment.php
+│   │   │   ├── ControllerMyCourse.php
+│   │   │   ├── ControllerMyProgress.php
+│   │   │   ├── ControllerMyExam.php
+│   │   │   ├── ControllerMyAttempt.php
+│   │   │   ├── ControllerMyResult.php
+│   │   │   └── ControllerMyCertificate.php
+│   │   │
+│   │   └── Landing/
+│   │       └── ControllerLanding.php
+│   │
+│   │   └── Middleware/
+│   │       ├── UserMiddleware.php (untuk admin, staff, teacher)
+│   │       └── StudentMiddleware.php (untuk student only)
+│   │
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Role.php
+│   │   ├── Student.php
+│   │   ├── StudentAccount.php
+│   │   ├── Institution.php
+│   │   ├── Address.php
+│   │   ├── Program.php
+│   │   ├── Classroom.php
+│   │   ├── Enrollment.php
+│   │   ├── Course.php
+│   │   ├── Module.php
+│   │   ├── Lesson.php
+│   │   ├── Progress.php
+│   │   ├── Exam.php
+│   │   ├── Question.php
+│   │   ├── Option.php
+│   │   ├── Attempt.php
+│   │   ├── AttemptDetail.php
+│   │   ├── Assessment.php
+│   │   ├── Certificate.php
+│   │   └── Media.php
+│   │
+│   └── Providers/
+│       ├── AppServiceProvider.php
+│       └── EventServiceProvider.php
+│
+├── database/
+│   ├── migrations/
+│   │   └── migration_silemes.php
+│   │
+│   └── seeders/
+│       ├── SeederSilemes.php
+│       └── DatabaseSeeder.php
+│
+├── public/
+│   ├── dist/ (AdminLTE)
+│   ├── plugins/
+│   ├── uploads/
+│   │   ├── users/
+│   │   ├── students/
+│   │   ├── courses/
+│   │   ├── exams/
+│   │   └── certificates/
+│   └── index.php
+│
+resources/
+├── views/
+│
+│   ├── layouts/
+│   │
+│   │   ├── appadmin.blade.php
+│   │   ├── appstaff.blade.php
+│   │   ├── appteacher.blade.php
+│   │   ├── appstudent.blade.php
+│   │   └── apppublic.blade.php
+│   │
+│   │   ├── partials/
+│   │   │
+│   │   │   ├── navbar/
+│   │   │   │   ├── landing.blade.php
+│   │   │   │   ├── user.blade.php
+│   │   │   │   └── student.blade.php
+│   │   │   │
+│   │   │   ├── footer.blade.php
+│   │   │
+│   │   │   ├── sidebar/
+│   │   │   │   ├── admin.blade.php
+│   │   │   │   ├── staff.blade.php
+│   │   │   │   ├── teacher.blade.php
+│   │   │   │   ├── student.blade.php
+│   │   │   │   └── landing.blade.php
+│   │   │
+│   │   │   └── components/
+│   │   │       ├── breadcrumb.blade.php
+│   │   │       ├── alert.blade.php
+│   │   │       └── card.blade.php
+│   │
+│   │   ├── admin/
+│   │   │   ├── dashboard/
+│   │   │   ├── users/
+│   │   │   ├── institutions/
+│   │   │   └── reports/
+│   │   │
+│   │   ├── staff/
+│   │   │   ├── dashboard/
+│   │   │   ├── students/
+│   │   │   └── enrollments/
+│   │   │
+│   │   ├── teacher/
+│   │   │   ├── dashboard/
+│   │   │   ├── courses/
+│   │   │   ├── exams/
+│   │   │   └── assessments/
+│   │   │
+│   │   ├── student/
+│   │   │   ├── dashboard/
+│   │   │   ├── courses/
+│   │   │   ├── exams/
+│   │   │   ├── results/
+│   │   │   └── certificates/
+│   │   │
+│   │   ├── landing/
+│   │   │   ├── home.blade.php
+│   │   │   ├── about.blade.php
+│   │   │   ├── contact.blade.php
+│   │   │   ├── contentdetail.blade.php
+│   │   │   ├── category.blade.php
+│   │   │   ├── categorydetail.blade.php
+│   │   │   └── toc.blade.php
+│   │   │
+│   │   ├── auth/
+│   │   │   ├── login_user.blade.php
+│   │   │   └── login_student.blade.php
+│   │   │
+│   │   └── errors/
+│   │       ├── 404.blade.php
+│   │       ├── 403.blade.php
+│   │       └── 500.blade.php
+│
+├── routes/
+│   └── web.php
+│
+└── .env
