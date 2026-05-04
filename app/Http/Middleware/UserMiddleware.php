@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class UserMiddleware
 {
@@ -12,23 +13,40 @@ class UserMiddleware
     {
         $user = Auth::guard('web')->user();
 
-        // belum login
+        /*
+        |--------------------------------------------------
+        | NOT LOGIN
+        |--------------------------------------------------
+        */
         if (!$user) {
             return redirect()->route('landing.home');
         }
 
         /*
         |--------------------------------------------------
-        | ROLE CHECK
+        | ROLE CHECK (AUTHORIZATION)
         |--------------------------------------------------
         */
-        if (!empty($roles)) {
-
-            if (!$user->hasAnyRole($roles)) {
-                abort(403);
-            }
-
+        if (!empty($roles) && !$user->hasAnyRole($roles)) {
+            abort(403);
         }
+
+        /*
+        |--------------------------------------------------
+        | THEME COLOR (PRESENTATION)
+        |--------------------------------------------------
+        */
+        $themeColor = 'primary'; // default
+
+        if ($user->hasRole('admin')) {
+            $themeColor = 'danger';
+        } elseif ($user->hasRole('staff')) {
+            $themeColor = 'warning';
+        } elseif ($user->hasRole('teacher')) {
+            $themeColor = 'success';
+        }
+
+        View::share('themeColor', $themeColor);
 
         return $next($request);
     }

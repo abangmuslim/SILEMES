@@ -2,7 +2,7 @@
 
     {{-- ================= KURSUS TERBARU ================= --}}
     <div class="card mb-3">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-danger text-white">
             <strong>Kursus Terbaru</strong>
         </div>
         <div class="card-body p-2">

@@ -4,7 +4,6 @@
 
 @section('content')
 
-@include('layouts.partials.components.breadcrumb')
 
 {{-- STATS --}}
 <div class="row">

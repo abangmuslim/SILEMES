@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Illuminate\Support\Facades\View;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,10 @@ class StudentMiddleware
                 ->with('error', 'Akun Anda tidak aktif');
         }
 
+        // THEME
+        View::share('themeColor', 'primary');
+
         return $next($request);
+
     }
 }

@@ -4,8 +4,6 @@
 
 @section('content')
 
-@include('layouts.partials.components.breadcrumb')
-
 <div class="row">
 
     <div class="col-md-6">

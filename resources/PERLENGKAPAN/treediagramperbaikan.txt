@@ -141,6 +141,7 @@ resources/
 │   │   │   │   └── student.blade.php
 │   │   │   │
 │   │   │   ├── footer.blade.php
+│   │   │   ├── theme.blade.php
 │   │   │
 │   │   │   ├── sidebar/
 │   │   │   │   ├── admin.blade.php

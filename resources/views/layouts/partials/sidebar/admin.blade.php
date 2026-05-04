@@ -1,16 +1,15 @@
-<aside class="main-sidebar sidebar-dark-success elevation-4">
+<aside class="main-sidebar sidebar-dark elevation-4">
 
     <a href="#" class="brand-link text-center">
         <span class="brand-text font-weight-bold">ADMIN</span>
     </a>
 
     <div class="sidebar">
-
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column">
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link active">
+                    <a href="#" class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -66,6 +65,5 @@
 
             </ul>
         </nav>
-
     </div>
 </aside>
